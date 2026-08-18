@@ -1,0 +1,13 @@
+# Dependencies
+node_modules/
+
+# Generated analyser output
+out/
+
+# Block fixtures are far too large for git (127 MB each, over GitHub's 100 MB
+# limit). Fetch them from the original challenge repository — see the README.
+chain-lens/fixtures/blocks/*.dat
+chain-lens/fixtures/blocks/*.dat.gz
+
+# OS noise
+.DS_Store
