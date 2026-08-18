@@ -1,0 +1,46 @@
+{
+  "network": "mainnet",
+  "utxos": [
+    {
+      "txid": "2222222222222222222222222222222222222222222222222222222222222222",
+      "vout": 0,
+      "value_sats": 60000,
+      "script_pubkey_hex": "00142222222222222222222222222222222222222222",
+      "script_type": "p2wpkh",
+      "address": "bc1qyg3zyg3zyg3zyg3zyg3zyg3zyg3zyg3zc6v074"
+    },
+    {
+      "txid": "2323232323232323232323232323232323232323232323232323232323232323",
+      "vout": 1,
+      "value_sats": 60000,
+      "script_pubkey_hex": "51202323232323232323232323232323232323232323232323232323232323232323",
+      "script_type": "p2tr",
+      "address": "bc1pyv3jxgeryv3jxgeryv3jxgeryv3jxgeryv3jxgeryv3jxgeryv3svntmkm"
+    },
+    {
+      "txid": "2424242424242424242424242424242424242424242424242424242424242424",
+      "vout": 2,
+      "value_sats": 30000,
+      "script_pubkey_hex": "00142424242424242424242424242424242424242424",
+      "script_type": "p2wpkh",
+      "address": "bc1qysjzgfpyysjzgfpyysjzgfpyysjzgfpye62tng"
+    }
+  ],
+  "payments": [
+    {
+      "address": "bc1pg3zyg3zyg3zyg3zyg3zyg3zyg3zyg3zyg3zyg3zyg3zyg3zyg3zq8ss0kf",
+      "script_pubkey_hex": "51204444444444444444444444444444444444444444444444444444444444444444",
+      "script_type": "p2tr",
+      "value_sats": 55000
+    }
+  ],
+  "change": {
+    "address": "bc1qg4z52329g4z52329g4z52329g4z523295mjv8g",
+    "script_pubkey_hex": "00144545454545454545454545454545454545454545",
+    "script_type": "p2wpkh"
+  },
+  "fee_rate_sat_vb": 3,
+  "policy": {
+    "max_inputs": 2
+  }
+}
