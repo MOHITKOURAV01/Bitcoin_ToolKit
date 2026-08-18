@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coin Smith — PSBT Transaction Builder</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <header class="app-header">
+        <div class="wrap header-inner">
+            <div class="brand">
+                <span class="brand-mark">₿</span>
+                <div>
+                    <h1>Coin Smith</h1>
+                    <p class="tagline">Pick the coins, build the payment, package it as a PSBT</p>
+                </div>
+            </div>
+            <div class="header-meta">
+                <div class="unit-toggle" role="group" aria-label="Display units">
+                    <button type="button" id="unit-sats" class="active">sats</button>
+                    <button type="button" id="unit-btc">BTC</button>
+                </div>
+                <span class="pill" id="network-status">mainnet</span>
+                <span class="pill pill-muted">BIP&#8209;174</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="wrap layout">
+
+        <!-- ── Left: fixture input ─────────────────────────────────────────── -->
+        <section class="panel panel-input">
+            <div class="panel-head">
+                <h2>1 &middot; Your wallet situation</h2>
+                <p class="hint">
+                    A <b>fixture</b> describes what your wallet owns and what you want to pay.
+                    Load a sample or paste your own.
+                </p>
+            </div>
+
+            <label class="field-label" for="fixture-picker">Sample scenarios</label>
+            <select id="fixture-picker">
+                <option value="">Loading samples…</option>
+            </select>
+            <p class="hint" id="fixture-description">Pick a scenario to see what it demonstrates.</p>
+
+            <label class="field-label" for="json-input">Fixture JSON</label>
+            <textarea id="json-input" spellcheck="false" placeholder="Paste fixture JSON here…"></textarea>
+
+            <div class="row">
+                <label for="file-upload" class="btn btn-ghost">Upload .json</label>
+                <input id="file-upload" type="file" accept=".json,application/json" hidden>
+                <button id="build-btn" class="btn btn-primary">Build transaction</button>
+            </div>
+
+            <div id="error-message" class="banner banner-error hidden"></div>
+
+            <div class="preview" id="fixture-preview">
+                <div class="empty">Load a fixture to preview it.</div>
+            </div>
+        </section>
+
+        <!-- ── Right: results ──────────────────────────────────────────────── -->
+        <section class="panel panel-output">
+
+            <div id="results-empty" class="empty-hero">
+                <div class="empty-hero-icon">⛏️</div>
+                <h2>Nothing built yet</h2>
+                <p>Load a scenario on the left and press <b>Build transaction</b>.
+                    You'll see which coins were spent, where the money went, and what it cost.</p>
+            </div>
+
+            <div id="results" class="hidden">
+
+                <!-- Plain-English summary -->
+                <div class="explainer" id="plain-summary"></div>
+
+                <!-- Headline numbers -->
+                <div class="stats">
+                    <div class="stat">
+                        <span class="stat-label">Coins spent
+                            <i class="info" data-tip="Each 'coin' (UTXO) is a chunk of bitcoin your wallet received earlier. You must spend a whole coin at a time.">i</i></span>
+                        <span class="stat-value" id="stat-inputs-count">0</span>
+                        <span class="stat-sub"><span id="stat-inputs-value">0</span> <span class="unit-word">sats</span> in</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Outputs created
+                            <i class="info" data-tip="Where the money goes: the people you're paying, plus your own change.">i</i></span>
+                        <span class="stat-value" id="stat-outputs-count">0</span>
+                        <span class="stat-sub"><span id="stat-outputs-value">0</span> <span class="unit-word">sats</span> out</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Miner fee
+                            <i class="info" data-tip="Whatever is left over after the outputs is paid to the miner who confirms your transaction.">i</i></span>
+                        <span class="stat-value accent-warn" id="stat-fee">0</span>
+                        <span class="stat-sub"><span id="stat-fee-rate">0</span> sat/vB</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Size
+                            <i class="info" data-tip="Virtual bytes (vB) measure how much block space the transaction takes. Bigger transaction = bigger fee.">i</i></span>
+                        <span class="stat-value" id="stat-vbytes">0</span>
+                        <span class="stat-sub">virtual bytes</span>
+                    </div>
+                </div>
+
+                <!-- Fee-rate gauge -->
+                <div class="gauge">
+                    <div class="gauge-readout">
+                        <span class="gauge-value" id="gauge-value">0</span>
+                        <span class="gauge-unit">sat/vB</span>
+                    </div>
+                    <div>
+                        <div class="gauge-scale">
+                            <div class="gauge-needle" id="gauge-needle" style="left:0%"></div>
+                        </div>
+                        <div class="gauge-ticks">
+                            <span>1</span><span>5</span><span>15</span><span>40</span><span>100</span><span>300+</span>
+                        </div>
+                        <p class="gauge-caption" id="gauge-caption"></p>
+                    </div>
+                </div>
+
+                <!-- Warnings -->
+                <div id="warnings" class="warnings hidden"></div>
+
+                <!-- UTXO pool -->
+                <div class="section" id="pool-section">
+                    <h3>2 &middot; Which coins were available</h3>
+                    <p class="hint">Every chunk of bitcoin your wallet holds. The highlighted ones were picked to
+                        fund this payment; the faded ones were left untouched. Tile height tracks value.</p>
+                    <div class="pool" id="utxo-pool"></div>
+                    <div class="pool-legend" id="pool-legend"></div>
+                    <div class="findings" id="wallet-findings"></div>
+                </div>
+
+                <!-- Flow diagram -->
+                <div class="section">
+                    <h3>3 &middot; Where the money moved</h3>
+                    <p class="hint">Coins on the left are consumed entirely. They are re-cut into the outputs on
+                        the right, and the small remainder is the miner's fee.</p>
+
+                    <div class="flow">
+                        <div class="flow-col">
+                            <div class="flow-head">
+                                <span>Inputs</span><span class="count" id="count-inputs">0</span>
+                            </div>
+                            <div id="inputs-list" class="list"></div>
+                            <div class="flow-total">Total in: <b id="flow-in-total">0</b> sats</div>
+                        </div>
+
+                        <div class="flow-mid">
+                            <div class="flow-arrow" aria-hidden="true"></div>
+                            <div class="flow-tx">
+                                <span class="flow-tx-label">Transaction</span>
+                                <span class="flow-tx-size" id="flow-vbytes">0 vB</span>
+                            </div>
+                            <div class="flow-arrow" aria-hidden="true"></div>
+                        </div>
+
+                        <div class="flow-col">
+                            <div class="flow-head">
+                                <span>Outputs</span><span class="count" id="count-outputs">0</span>
+                            </div>
+                            <div id="outputs-list" class="list"></div>
+                            <div class="flow-total">Total out: <b id="flow-out-total">0</b> sats
+                                <span class="flow-fee">+ <b id="flow-fee">0</b> fee</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="balance-bar" id="balance-bar"></div>
+                    <p class="balance-check" id="balance-check"></p>
+
+                    <p class="hint" style="margin-top:18px">Every satoshi traced from the coin it came from to
+                        where it ended up. Ribbon thickness is the amount carried.</p>
+                    <div class="sankey-wrap"><svg class="sankey" id="sankey" role="img"
+                        aria-label="Value flow from inputs to outputs"></svg></div>
+                </div>
+
+                <!-- Fee maths -->
+                <div class="section">
+                    <h3>4 &middot; How the fee was worked out</h3>
+                    <p class="hint">You don't pay per bitcoin sent — you pay for the <b>space</b> the transaction
+                        takes in a block. That's why adding a change output can raise the fee.</p>
+                    <div class="fee-math" id="fee-math"></div>
+
+                    <p class="hint" style="margin-top:18px">Where those virtual bytes actually go. Each input costs
+                        far more space than each output, which is why sweeping many small coins is expensive.</p>
+                    <div class="stack" id="size-stack"></div>
+                    <div class="stack-key" id="size-key"></div>
+
+                    <div class="sim">
+                        <div class="sim-head">
+                            <h4>What if you paid a different rate?</h4>
+                            <span class="sim-readout"><b id="sim-rate">0</b> sat/vB</span>
+                        </div>
+                        <p class="hint">Drag to rebuild the same payment at another fee rate. Watch the fee move —
+                            and watch the coin selection change when the rate gets high enough that spending an extra
+                            input costs more than it brings in.</p>
+                        <input type="range" id="sim-slider" min="1" max="120" value="1" step="1">
+                        <div class="sim-grid" id="sim-grid"></div>
+                    </div>
+                </div>
+
+                <!-- Spending rules -->
+                <div class="section">
+                    <h3>5 &middot; Spending rules on this transaction</h3>
+                    <div class="rules">
+                        <div class="rule">
+                            <div class="rule-head">
+                                <span>Replace&#8209;by&#8209;Fee (RBF)</span>
+                                <span id="rbf-status" class="badge">off</span>
+                            </div>
+                            <p id="rbf-explain" class="rule-text"></p>
+                            <code class="rule-code" id="rbf-code">nSequence = 0xffffffff</code>
+                        </div>
+                        <div class="rule">
+                            <div class="rule-head">
+                                <span>Time lock</span>
+                                <span id="locktime-badge" class="badge">none</span>
+                            </div>
+                            <p id="locktime-explain" class="rule-text"></p>
+                            <code class="rule-code" id="locktime-code">nLockTime = 0</code>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coin selection -->
+                <div class="section" id="strategy-section">
+                    <h3>6 &middot; Why these coins?</h3>
+                    <p class="hint">Coin Smith prices several selection strategies and keeps the one that gives up
+                        the least value. Here's the comparison.</p>
+                    <div class="strategies" id="strategies"></div>
+                </div>
+
+                <!-- PSBT -->
+                <div class="section">
+                    <h3>7 &middot; The PSBT</h3>
+                    <p class="hint">A <b>Partially Signed Bitcoin Transaction</b> is the unsigned transaction packaged
+                        with everything a signer needs to check it. Nothing here is signed, so it is safe to hand to a
+                        hardware wallet or a co&#8209;signer.</p>
+                    <div class="psbt-tabs">
+                        <button type="button" class="psbt-tab active" id="psbt-tab-decoded">Decoded fields</button>
+                        <button type="button" class="psbt-tab" id="psbt-tab-raw">Raw base64</button>
+                        <button id="copy-psbt" class="btn btn-ghost btn-sm" style="margin-left:auto">Copy</button>
+                    </div>
+                    <div id="psbt-decoded"></div>
+                    <div class="psbt hidden" id="psbt-content"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ── Glossary ────────────────────────────────────────────────────────── -->
+    <section class="wrap glossary">
+        <h3>Bitcoin in plain English</h3>
+        <div class="glossary-grid">
+            <div class="term">
+                <h4>UTXO ("a coin")</h4>
+                <p>Bitcoin isn't a balance — it's a pile of separate chunks you received. Each chunk must be spent
+                    whole, like handing over a whole banknote.</p>
+            </div>
+            <div class="term">
+                <h4>Coin selection</h4>
+                <p>Choosing which chunks to hand over. Fewer, larger coins keep the transaction small and cheap.</p>
+            </div>
+            <div class="term">
+                <h4>Change</h4>
+                <p>Spend a 100,000&nbsp;sat coin to pay 70,000 and the rest comes back to you as a new coin — exactly
+                    like change from a banknote.</p>
+            </div>
+            <div class="term">
+                <h4>Dust</h4>
+                <p>An output so small (under 546&nbsp;sats) that spending it later would cost more in fees than it's
+                    worth. Creating one wastes money, so we fold it into the fee instead.</p>
+            </div>
+            <div class="term">
+                <h4>Fee rate &amp; vbytes</h4>
+                <p>Miners sell block space. You bid in satoshis per virtual byte, so <b>fee = size × rate</b>. More
+                    inputs and outputs mean a bigger, pricier transaction.</p>
+            </div>
+            <div class="term">
+                <h4>Send&#8209;all</h4>
+                <p>When the leftover is too small to be worth keeping, there's no change output and the whole remainder
+                    becomes the miner's fee.</p>
+            </div>
+            <div class="term">
+                <h4>PSBT</h4>
+                <p>A standard envelope (BIP&#8209;174) holding an unsigned transaction plus the details a wallet needs to
+                    verify and sign it safely.</p>
+            </div>
+            <div class="term">
+                <h4>RBF</h4>
+                <p>Replace&#8209;by&#8209;Fee. Flagging each input with <code>nSequence&nbsp;0xfffffffd</code> tells the
+                    network "I may resend this with a higher fee" — useful if it's confirming too slowly.</p>
+            </div>
+            <div class="term">
+                <h4>nLockTime</h4>
+                <p>An earliest-spend time. Below 500,000,000 it means a block height; at or above, a unix timestamp.
+                    Wallets set it to the current height so a miner can't profitably re-mine your transaction.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="wrap footer">
+        <span>Coin Smith · coin selection, fee &amp; change safety, PSBT export</span>
+        <span id="api-health" class="pill pill-muted">checking API…</span>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
