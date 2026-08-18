@@ -1,5 +1,7 @@
 # Bitcoin Toolkit
 
+![Bitcoin Toolkit](docs/hero.jpg)
+
 Two tools that take a Bitcoin transaction apart and put one back together, plus a
 landing page that ties them together and decodes real transactions in the browser.
 
@@ -10,6 +12,8 @@ landing page that ties them together and decodes real transactions in the browse
 | **Landing page** | Explains both, and decodes real mainnet transactions client-side — no server required. |
 
 Built for the Summer of Bitcoin 2026 developer challenges.
+
+![Pick a dashboard](docs/dashboards.jpg)
 
 ---
 
@@ -33,6 +37,18 @@ Each project also runs standalone:
 cd chain-lens  && ./setup.sh && ./web.sh      # or ./cli.sh <fixture.json>
 cd coin-smith  && ./setup.sh && ./web.sh      # or ./cli.sh <fixture.json>
 ```
+
+---
+
+## Screenshots
+
+**Chain Lens** — decodes a transaction and explains what it does, byte by byte.
+
+![Chain Lens](docs/chain-lens.jpg)
+
+**Coin Smith** — selects coins, works out fee and change, and warns about anything unsafe.
+
+![Coin Smith](docs/coin-smith.jpg)
 
 ---
 
