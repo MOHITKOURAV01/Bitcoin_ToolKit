@@ -25,9 +25,9 @@ Built for the Summer of Bitcoin 2026 developer challenges.
 
 | | |
 |---|---|
-| Landing page | http://127.0.0.1:8080 |
-| Chain Lens | http://127.0.0.1:3222 |
-| Coin Smith | http://127.0.0.1:3333 |
+| Landing page | `127.0.0.1:8080` |
+| Chain Lens | `127.0.0.1:3222` |
+| Coin Smith | `127.0.0.1:3333` |
 
 Ports are overridable with `HOME_PORT`, `LENS_PORT` and `SMITH_PORT`. `Ctrl-C` stops all three.
 
