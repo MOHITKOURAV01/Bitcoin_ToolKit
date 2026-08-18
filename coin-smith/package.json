@@ -1,0 +1,31 @@
+{
+  "name": "2026-developer-challenge-2-coin-smith-mohitkourav01",
+  "version": "1.0.0",
+  "description": "[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/bK2yja45) # Week 2 Challenge: Coin Smith",
+  "main": "index.js",
+  "scripts": {
+    "test": "node ./node_modules/jest/bin/jest.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SummerOfBitcoin/2026-developer-challenge-2-coin-smith-MOHITKOURAV01.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/SummerOfBitcoin/2026-developer-challenge-2-coin-smith-MOHITKOURAV01/issues"
+  },
+  "homepage": "https://github.com/SummerOfBitcoin/2026-developer-challenge-2-coin-smith-MOHITKOURAV01#readme",
+  "dependencies": {
+    "bitcoinjs-lib": "^7.0.1",
+    "cors": "^2.8.6",
+    "ecpair": "^3.0.1",
+    "express": "^5.2.1",
+    "tiny-secp256k1": "^2.2.4"
+  },
+  "devDependencies": {
+    "jest": "^30.2.0"
+  }
+}
