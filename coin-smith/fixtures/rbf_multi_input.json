@@ -1,0 +1,47 @@
+{
+  "network": "mainnet",
+  "utxos": [
+    {
+      "txid": "a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7",
+      "vout": 0,
+      "value_sats": 30000,
+      "script_pubkey_hex": "0014a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7",
+      "script_type": "p2wpkh",
+      "address": "bc1q57n60fa857n60fa857n60fa857n60fa85gs06l"
+    },
+    {
+      "txid": "a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8",
+      "vout": 0,
+      "value_sats": 30000,
+      "script_pubkey_hex": "0014a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8",
+      "script_type": "p2wpkh",
+      "address": "bc1q4z52329g4z52329g4z52329g4z52329gmszm7x"
+    },
+    {
+      "txid": "a9a9a9a9a9a9a9a9a9a9a9a9a9a9a9a9a9a9a9a9a9a9a9a9a9a9a9a9a9a9a9a9",
+      "vout": 0,
+      "value_sats": 30000,
+      "script_pubkey_hex": "0014a9a9a9a9a9a9a9a9a9a9a9a9a9a9a9a9a9a9a9a9",
+      "script_type": "p2wpkh",
+      "address": "bc1q4x56n2df4x56n2df4x56n2df4x56n2df6qr658"
+    }
+  ],
+  "payments": [
+    {
+      "address": "bc1q42424242424242424242424242424242ty9ll3",
+      "script_pubkey_hex": "0014aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "script_type": "p2wpkh",
+      "value_sats": 70000
+    }
+  ],
+  "change": {
+    "address": "bc1q4w46h2at4w46h2at4w46h2at4w46h2at25y74s",
+    "script_pubkey_hex": "0014abababababababababababababababababababab",
+    "script_type": "p2wpkh"
+  },
+  "fee_rate_sat_vb": 4,
+  "rbf": true,
+  "policy": {
+    "max_inputs": 5
+  }
+}
