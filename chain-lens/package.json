@@ -1,0 +1,14 @@
+{
+    "name": "chain-lens",
+    "version": "1.0.0",
+    "description": "Bitcoin Transaction and Block Analyzer",
+    "main": "src/cli/index.js",
+    "scripts": {
+        "start": "node src/web/server.js",
+        "cli": "node src/cli/index.js",
+        "test": "node --test src/parser/parser.test.js"
+    },
+    "dependencies": {
+        "express": "^4.22.1"
+    }
+}
