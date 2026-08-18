@@ -1,0 +1,32 @@
+{
+  "network": "mainnet",
+  "utxos": [
+    {
+      "txid": "b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7",
+      "vout": 0,
+      "value_sats": 250000,
+      "script_pubkey_hex": "0014b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7",
+      "script_type": "p2wpkh",
+      "address": "bc1qk7mm0dahk7mm0dahk7mm0dahk7mm0dah8xxn9v"
+    }
+  ],
+  "payments": [
+    {
+      "address": "bc1qhzut3w9chzut3w9chzut3w9chzut3w9cg758p4",
+      "script_pubkey_hex": "0014b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8",
+      "script_type": "p2wpkh",
+      "value_sats": 200000
+    }
+  ],
+  "change": {
+    "address": "bc1qhxumnwdehxumnwdehxumnwdehxumnwdefw4xt5",
+    "script_pubkey_hex": "0014b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9",
+    "script_type": "p2wpkh"
+  },
+  "fee_rate_sat_vb": 5,
+  "rbf": true,
+  "current_height": 860000,
+  "policy": {
+    "max_inputs": 5
+  }
+}
