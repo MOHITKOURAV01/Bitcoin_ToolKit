@@ -1,0 +1,31 @@
+{
+  "network": "mainnet",
+  "utxos": [
+    {
+      "txid": "b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1",
+      "vout": 0,
+      "value_sats": 200000,
+      "script_pubkey_hex": "0014b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1",
+      "script_type": "p2wpkh",
+      "address": "bc1qkxcmrvd3kxcmrvd3kxcmrvd3kxcmrvd3xxqhg3"
+    }
+  ],
+  "payments": [
+    {
+      "address": "bc1qk2et9v4jk2et9v4jk2et9v4jk2et9v4jhzxjr8",
+      "script_pubkey_hex": "0014b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2",
+      "script_type": "p2wpkh",
+      "value_sats": 150000
+    }
+  ],
+  "change": {
+    "address": "bc1qkwem8vankwem8vankwem8vankwem8vankj8nfx",
+    "script_pubkey_hex": "0014b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3",
+    "script_type": "p2wpkh"
+  },
+  "fee_rate_sat_vb": 5,
+  "locktime": 850000,
+  "policy": {
+    "max_inputs": 5
+  }
+}
