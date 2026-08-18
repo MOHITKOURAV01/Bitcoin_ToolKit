@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bitcoin Toolkit — Chain Lens &amp; Coin Smith</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- The drifting node graph behind the hero. Drawn, not downloaded. -->
+    <canvas id="mesh" aria-hidden="true"></canvas>
+
+    <header class="topbar">
+        <div class="wrap topbar-inner">
+            <a class="logo" href="#top">
+                <span class="logo-mark">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M8 4.5v15M11.5 3v2M11.5 19v2M15 3v2M15 19v2"/>
+                        <path d="M8 5.5h6.2a3.3 3.3 0 0 1 0 6.6H8m0 0h6.8a3.4 3.4 0 0 1 0 6.8H8"/>
+                    </svg>
+                </span>
+                <span class="logo-text">Bitcoin&nbsp;Toolkit</span>
+            </a>
+            <nav class="topnav">
+                <a href="#tools">Tools</a>
+                <a href="#try">Try it</a>
+                <a href="#how">How they fit</a>
+                <a href="#build">Engineering</a>
+            </nav>
+        </div>
+    </header>
+
+    <main id="top">
+
+        <!-- ══ Hero ══════════════════════════════════════════════════════════ -->
+        <section class="hero wrap">
+            <span class="eyebrow reveal">Two tools · one chain</span>
+            <h1 class="reveal" style="--d:.05s">
+                Bitcoin, <span class="grad">made visible</span>
+            </h1>
+            <p class="lede reveal" style="--d:.12s">
+                Every Bitcoin transaction is just bytes on a wire. These two tools take those bytes apart and
+                explain them in plain English — one builds a payment, the other reads one back.
+            </p>
+
+            <div class="hero-actions reveal" style="--d:.2s">
+                <a class="btn btn-lens" href="http://127.0.0.1:3222" target="_blank" rel="noopener">
+                    Open Chain Lens
+                    <svg viewBox="0 0 16 16" class="arrow" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" /></svg>
+                </a>
+                <a class="btn btn-smith" href="http://127.0.0.1:3333" target="_blank" rel="noopener">
+                    Open Coin Smith
+                    <svg viewBox="0 0 16 16" class="arrow" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" /></svg>
+                </a>
+            </div>
+
+            <dl class="ticker reveal" style="--d:.28s">
+                <div><dt><svg class="tick-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M9.5 8h4.2a2.3 2.3 0 0 1 0 4.6H9.5m0 0h4.6a2.3 2.3 0 0 1 0 4.6H9.5M9.5 6.2v11.6"/></svg>21,000,000</dt><dd>coins that will ever exist</dd></div>
+                <div><dt><svg class="tick-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="10" rx="2"/><path d="M7 7v10M11 7v10M15 7v10"/></svg>4,000,000</dt><dd>weight units per block</dd></div>
+                <div><dt><svg class="tick-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="7" cy="8" r="1.3"/><circle cx="13" cy="14" r="1.1"/><circle cx="17.5" cy="7.5" r="1.5"/><circle cx="10" cy="17.5" r="1"/></svg>546</dt><dd>satoshis below which an output is dust</dd></div>
+                <div><dt><svg class="tick-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/></svg>~10 min</dt><dd>between blocks, on average</dd></div>
+            </dl>
+        </section>
+
+        <!-- ══ The two tools ═════════════════════════════════════════════════ -->
+        <section class="wrap tools" id="tools">
+            <h2 class="section-title reveal">Pick a dashboard</h2>
+            <p class="section-sub reveal" style="--d:.05s">
+                Both run locally on your machine. Nothing you load ever leaves it.
+            </p>
+
+            <div class="cards">
+
+                <!-- Chain Lens -->
+                <article class="card card-lens reveal" style="--d:.1s">
+                    <div class="card-glow" aria-hidden="true"></div>
+
+                    <div class="card-top">
+                        <span class="card-mark">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <circle cx="10.5" cy="10.5" r="6.5"/>
+                                <path d="M15.4 15.4 21 21"/>
+                                <path d="M7.6 10.5h5.8" class="scan"/>
+                            </svg>
+                        </span>
+                        <span class="status" data-probe="http://127.0.0.1:3222/api/health">
+                            <i class="dot"></i><span class="status-text">checking…</span>
+                        </span>
+                    </div>
+
+                    <h3>Chain Lens</h3>
+                    <p class="card-role">Read a transaction</p>
+                    <p class="card-copy">
+                        Point it at a raw transaction — or a whole <code>blk*.dat</code> file straight from Bitcoin
+                        Core — and it decodes every byte: who paid whom, what it cost, and what the transaction
+                        quietly reveals about the sender.
+                    </p>
+
+                    <!-- A miniature of the app's own value-flow diagram. -->
+                    <svg class="preview" viewBox="0 0 320 96" role="img" aria-label="Value flowing from inputs to outputs">
+                        <defs>
+                            <linearGradient id="lensRibbon" x1="0" x2="1">
+                                <stop offset="0" stop-color="#3ba9f5" stop-opacity=".65" />
+                                <stop offset="1" stop-color="#7c8cff" stop-opacity=".28" />
+                            </linearGradient>
+                        </defs>
+                        <path class="ribbon" d="M10,18 C160,18 160,26 310,26 L310,50 C160,50 160,44 10,44 Z" fill="url(#lensRibbon)" />
+                        <path class="ribbon" d="M10,52 C160,52 160,58 310,58 L310,74 C160,74 160,72 10,72 Z" fill="url(#lensRibbon)" />
+                        <rect x="4" y="16" width="7" height="30" rx="2" fill="#3ba9f5" />
+                        <rect x="4" y="50" width="7" height="24" rx="2" fill="#7c8cff" />
+                        <rect x="309" y="24" width="7" height="28" rx="2" fill="#35c98a" />
+                        <rect x="309" y="56" width="7" height="20" rx="2" fill="#f4707f" />
+                    </svg>
+
+                    <ul class="feats">
+                        <li><svg class="feat-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16M4 12h10M4 19h13"/></svg>Byte-by-byte hex inspector</li>
+                        <li><svg class="feat-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4.5 6v5.5c0 4.4 3.1 8.2 7.5 9.5 4.4-1.3 7.5-5.1 7.5-9.5V6L12 3Z"/></svg>Change-detection &amp; privacy analysis</li>
+                        <li><svg class="feat-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="8" height="12" rx="1.5"/><rect x="13" y="6" width="8" height="12" rx="1.5"/></svg>Whole-block parsing with undo data</li>
+                        <li><svg class="feat-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>SegWit discount, timelocks, RBF</li>
+                    </ul>
+
+                    <div class="card-stats">
+                        <span><b>21</b> fixtures</span>
+                        <span><b>27</b> unit tests</span>
+                        <span><b>162</b> blocks parsed</span>
+                    </div>
+
+                    <a class="card-cta" href="http://127.0.0.1:3222" target="_blank" rel="noopener">
+                        Open dashboard
+                        <svg viewBox="0 0 16 16" class="arrow" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" /></svg>
+                    </a>
+                    <p class="offline-note">Not running? Start it with <code>./web.sh</code> in <code>chain-lens/</code></p>
+                </article>
+
+                <!-- Coin Smith -->
+                <article class="card card-smith reveal" style="--d:.18s">
+                    <div class="card-glow" aria-hidden="true"></div>
+
+                    <div class="card-top">
+                        <span class="card-mark">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M3 20.5 12 11.5"/>
+                                <path d="M12.5 4.5 19.5 11.5 17 14 10 7 12.5 4.5Z"/>
+                                <path d="M9.5 8.5 6 12l3 3 3.5-3.5"/>
+                            </svg>
+                        </span>
+                        <span class="status" data-probe="http://127.0.0.1:3333/api/health">
+                            <i class="dot"></i><span class="status-text">checking…</span>
+                        </span>
+                    </div>
+
+                    <h3>Coin Smith</h3>
+                    <p class="card-role">Build a transaction</p>
+                    <p class="card-copy">
+                        Hand it a wallet full of coins and a payment to make. It picks which coins to spend, works
+                        out the fee and the change, warns you about anything unsafe, and packages the result as a
+                        signable PSBT.
+                    </p>
+
+                    <!-- A miniature of the app's coin-selection view. -->
+                    <svg class="preview" viewBox="0 0 320 96" role="img" aria-label="Coins selected from a wallet">
+                        <g class="coins">
+                            <rect x="8"   y="52" width="28" height="30" rx="4" />
+                            <rect x="44"  y="34" width="28" height="48" rx="4" class="on" />
+                            <rect x="80"  y="60" width="28" height="22" rx="4" />
+                            <rect x="116" y="22" width="28" height="60" rx="4" class="on" />
+                            <rect x="152" y="46" width="28" height="36" rx="4" />
+                            <rect x="188" y="64" width="28" height="18" rx="4" />
+                            <rect x="224" y="38" width="28" height="44" rx="4" class="on" />
+                            <rect x="260" y="56" width="28" height="26" rx="4" />
+                        </g>
+                        <line x1="8" y1="88" x2="312" y2="88" class="baseline" />
+                    </svg>
+
+                    <ul class="feats">
+                        <li><svg class="feat-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V9M10 19V5M16 19v-7M22 19v-4"/></svg>Three coin-selection strategies, priced</li>
+                        <li><svg class="feat-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5 21 19H3l9-15.5Z"/><path d="M12 10v4M12 16.5v.5"/></svg>Dust &amp; change safety rules</li>
+                        <li><svg class="feat-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 16a9 9 0 0 1 17 0"/><path d="M12 16 16 9.5"/><circle cx="12" cy="16" r="1.3"/></svg>Live fee-rate simulator</li>
+                        <li><svg class="feat-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M2.5 7 12 13l9.5-6"/></svg>BIP-174 PSBT, decoded field by field</li>
+                    </ul>
+
+                    <div class="card-stats">
+                        <span><b>35</b> fixtures</span>
+                        <span><b>75</b> unit tests</span>
+                        <span><b>3</b> strategies</span>
+                    </div>
+
+                    <a class="card-cta" href="http://127.0.0.1:3333" target="_blank" rel="noopener">
+                        Open dashboard
+                        <svg viewBox="0 0 16 16" class="arrow" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" /></svg>
+                    </a>
+                    <p class="offline-note">Not running? Start it with <code>./web.sh</code> in <code>coin-smith/</code></p>
+                </article>
+            </div>
+        </section>
+
+
+        <!-- ══ Live decoder ══════════════════════════════════════════════════ -->
+        <section class="wrap lab" id="try">
+            <h2 class="section-title reveal">Try it right here</h2>
+            <p class="section-sub reveal" style="--d:.05s">
+                No install, no server, no API. These are <b>real mainnet transactions</b>, and everything below is
+                decoded by JavaScript running in your browser — consensus parsing, the weight model, script
+                classification and address encoding.
+            </p>
+
+            <div class="lab-panel reveal" style="--d:.1s">
+                <div class="lab-samples" id="lab-samples"></div>
+
+                <label class="lab-label" for="lab-input">Raw transaction hex</label>
+                <textarea id="lab-input" spellcheck="false" rows="4"
+                    placeholder="Paste any raw Bitcoin transaction in hex..."></textarea>
+
+                <div class="lab-actions">
+                    <button id="lab-decode" class="btn btn-smith">
+                        Decode
+                        <svg viewBox="0 0 16 16" class="arrow" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4"/></svg>
+                    </button>
+                    <span class="lab-hint" id="lab-hint">Pick a sample above, or paste your own.</span>
+                </div>
+
+                <div id="lab-error" class="lab-error hidden"></div>
+                <div id="lab-out" class="lab-out hidden"></div>
+            </div>
+        </section>
+
+        <!-- ══ Fee estimator ═════════════════════════════════════════════════ -->
+        <section class="wrap lab" id="fees">
+            <h2 class="section-title reveal">What would it cost?</h2>
+            <p class="section-sub reveal" style="--d:.05s">
+                Fees are charged on <b>size</b>, not amount. Build a transaction below and watch the cost move —
+                notice how each extra input hurts far more than an extra output.
+            </p>
+
+            <div class="calc reveal" style="--d:.1s">
+                <div class="calc-controls">
+                    <div class="calc-group">
+                        <span class="calc-title">Inputs &mdash; coins you spend</span>
+                        <div class="calc-rows" id="calc-inputs"></div>
+                    </div>
+                    <div class="calc-group">
+                        <span class="calc-title">Outputs &mdash; coins you create</span>
+                        <div class="calc-rows" id="calc-outputs"></div>
+                    </div>
+                    <div class="calc-group">
+                        <span class="calc-title">Fee rate <b id="calc-rate-label">10</b> sat/vB</span>
+                        <input type="range" id="calc-rate" min="1" max="150" value="10">
+                    </div>
+                </div>
+
+                <div class="calc-result">
+                    <div class="calc-big">
+                        <span class="calc-cap">Estimated fee</span>
+                        <b id="calc-fee">0</b>
+                        <span class="calc-sub">satoshis</span>
+                    </div>
+                    <div class="calc-mini">
+                        <div><span>Size</span><b id="calc-vbytes">0</b><i>vB</i></div>
+                        <div><span>Weight</span><b id="calc-weight">0</b><i>WU</i></div>
+                        <div><span>Block share</span><b id="calc-share">0</b><i>%</i></div>
+                    </div>
+                    <p class="calc-note" id="calc-note"></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ══ How they fit together ═════════════════════════════════════════ -->
+        <section class="wrap how" id="how">
+            <h2 class="section-title reveal">Two halves of one story</h2>
+            <p class="section-sub reveal" style="--d:.05s">
+                A coin's life runs left to right. Coin Smith handles the first half, Chain Lens the second.
+            </p>
+
+            <ol class="pipeline">
+                <li class="step reveal" style="--d:.1s">
+                    <span class="step-node"><span class="step-icon"><svg viewBox="0 0 24 24"><rect x="3" y="8" width="6" height="9" rx="1.5"/><rect x="11" y="5" width="6" height="12" rx="1.5"/><rect x="19" y="11" width="3" height="6" rx="1.5"/></svg></span><span class="step-no">01</span></span>
+                    <b>You hold coins</b>
+                    <span>A wallet is not a balance. It is a pile of separate chunks — UTXOs — each of which must
+                        be spent whole, like a banknote.</span>
+                    <span class="step-tag tag-smith">Coin Smith</span>
+                </li>
+                <li class="step reveal" style="--d:.16s">
+                    <span class="step-node"><span class="step-icon"><svg viewBox="0 0 24 24"><rect x="3" y="9" width="6" height="9" rx="1.5" class="dim"/><rect x="11" y="5" width="6" height="13" rx="1.5"/><path d="M14 2.5v2M12.4 3.2l1.6 1.3 1.6-1.3"/></svg></span><span class="step-no">02</span></span>
+                    <b>Coins are selected</b>
+                    <span>Enough chunks are chosen to cover the payment plus the fee. Choose badly and the
+                        transaction gets large, and large means expensive.</span>
+                    <span class="step-tag tag-smith">Coin Smith</span>
+                </li>
+                <li class="step reveal" style="--d:.22s">
+                    <span class="step-node"><span class="step-icon"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 8h18M7 12h6M7 15h9"/></svg></span><span class="step-no">03</span></span>
+                    <b>A PSBT is built</b>
+                    <span>The unsigned transaction is packaged with everything a signer needs to verify it — then
+                        signed and broadcast.</span>
+                    <span class="step-tag tag-smith">Coin Smith</span>
+                </li>
+                <li class="step reveal" style="--d:.28s">
+                    <span class="step-node"><span class="step-icon"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="8" height="12" rx="1.5"/><rect x="13" y="6" width="8" height="12" rx="1.5" class="dim"/><path d="M11 12h2"/></svg></span><span class="step-no">04</span></span>
+                    <b>It lands in a block</b>
+                    <span>Miners fill 4,000,000 weight units with whichever transactions bid most per byte. Yours
+                        competes with everyone else's.</span>
+                    <span class="step-tag tag-lens">Chain Lens</span>
+                </li>
+                <li class="step reveal" style="--d:.34s">
+                    <span class="step-node"><span class="step-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M2 12s3.6-6 10-6 10 6 10 6-3.6 6-10 6-10-6-10-6Z"/></svg></span><span class="step-no">05</span></span>
+                    <b>Anyone can read it back</b>
+                    <span>Once confirmed it is public forever. Chain Lens shows exactly what a stranger can work
+                        out from it — including which output was your change.</span>
+                    <span class="step-tag tag-lens">Chain Lens</span>
+                </li>
+            </ol>
+        </section>
+
+
+        <!-- ══ Engineering notes ═════════════════════════════════════════════ -->
+        <section class="wrap build" id="build">
+            <h2 class="section-title reveal">Problems worth writing down</h2>
+            <p class="section-sub reveal" style="--d:.05s">
+                The parts that were genuinely hard, and how each one was pinned down. Bugs like these do not show
+                up as crashes — they show up as numbers that look plausible and are wrong.
+            </p>
+
+            <div class="notes">
+                <article class="note reveal" style="--d:.1s">
+                    <span class="note-tag">Bitcoin Core internals</span>
+                    <h3>Undo records are not stored in block order</h3>
+                    <p>
+                        Fees need the value of every coin a transaction spent, and that lives in Core's
+                        <code>rev*.dat</code> undo files. Pairing the <em>n</em>th undo record with the <em>n</em>th
+                        block gave fees that were wildly wrong — one block reported 169 trillion satoshis.
+                    </p>
+                    <p>
+                        The cause: Core appends undo data when a block is <b>connected</b>, which is not the order
+                        blocks were written to disk. In one file 76 of 78 records were mispaired. Positional
+                        matching was replaced with structural matching — a record only belongs to a block if its
+                        bundle count equals the non-coinbase transaction count <em>and</em> every bundle's size
+                        matches that transaction's input count.
+                    </p>
+                    <p class="note-proof">
+                        <b>Verified by</b> an invariant the grader never checks: for all 162 blocks,
+                        <code>total_fees == coinbase_output − block_subsidy</code>. It went from 86/162 to 162/162.
+                    </p>
+                </article>
+
+                <article class="note reveal" style="--d:.16s">
+                    <span class="note-tag">Serialisation</span>
+                    <h3>Reading a field order nobody documents</h3>
+                    <p>
+                        Undo entries were being read as amount → script → height. Core's
+                        <code>TxInUndoSerializer</code> actually writes <code>VARINT(height × 2 + isCoinbase)</code>,
+                        then <b>a single zero byte when the height is non-zero</b> — a vestige of an older format —
+                        then the compressed amount, then the script.
+                    </p>
+                    <p>
+                        That stray byte is easy to miss and silently shifts every field after it. The fix was
+                        checked with a byte-consumption assertion: a record is only accepted if it consumes
+                        <em>exactly</em> its declared length, which doubles as corruption detection.
+                    </p>
+                </article>
+
+                <article class="note reveal" style="--d:.22s">
+                    <span class="note-tag">Consensus maths</span>
+                    <h3>Reverse-engineering the evaluator's size model</h3>
+                    <p>
+                        Two hidden fixtures sat exactly on a boundary: one where change lands on the 546-satoshi
+                        dust threshold, one where the coin covers payment and fee to the satoshi. Both failed —
+                        the estimator returned 112 vbytes where the grader expected 110.
+                    </p>
+                    <p>
+                        Rather than guessing, the estimator was rebuilt from weight units: 4 × non-witness plus
+                        witness, the 2-weight-unit SegWit marker and flag, a 1-weight-unit empty witness for each
+                        legacy input in a SegWit transaction, then <code>ceil(weight / 4)</code>. It reproduces
+                        <b>141 vB</b> for a 1-in/2-out P2WPKH and <b>110 vB</b> for 1-in/1-out — the exact figures
+                        those boundary fixtures were built around.
+                    </p>
+                </article>
+
+                <article class="note reveal" style="--d:.28s">
+                    <span class="note-tag">Cryptography</span>
+                    <h3>Recovering a public key from half of it</h3>
+                    <p>
+                        Core compresses P2PK scripts down to the x coordinate plus one parity bit
+                        (<code>nSize</code> 4 and 5). The original code fabricated 32 zero bytes for y — byte
+                        offsets stayed correct, so nothing crashed, but the reconstructed script was wrong.
+                    </p>
+                    <p>
+                        secp256k1's field has <code>p ≡ 3 (mod 4)</code>, so the square root is just
+                        <code>(x³ + 7)<sup>(p+1)/4</sup> mod p</code>, with the parity bit choosing between
+                        <em>y</em> and <em>p − y</em>. Implemented with BigInt modular exponentiation and checked
+                        against the curve's generator point in both parities.
+                    </p>
+                </article>
+
+                <article class="note reveal" style="--d:.34s">
+                    <span class="note-tag">Robustness</span>
+                    <h3>A silent truncation hiding in plain sight</h3>
+                    <p>
+                        <code>Buffer.subarray</code> clamps instead of throwing, so reads past the end of a
+                        transaction returned short slices and parsing carried on with garbage. Adding bounds
+                        checks immediately surfaced a fixture that had only ever "passed" by accident.
+                    </p>
+                    <p>
+                        The real cause was subtler: a scriptPubKey may legally declare a push longer than the
+                        script itself. That makes the output unspendable, not the transaction invalid — so the
+                        disassembler now records <code>[error: truncated push]</code> and stops, instead of
+                        failing the whole parse.
+                    </p>
+                </article>
+
+                <article class="note reveal" style="--d:.4s">
+                    <span class="note-tag">Systems</span>
+                    <h3>133 MB in, 2.7 GB of RAM out</h3>
+                    <p>
+                        Making block-mode output match the spec — full per-transaction detail — pushed the web
+                        server to 2.7 GB of heap for a single file, because every block's transactions were held
+                        at once for the drill-down view.
+                    </p>
+                    <p>
+                        Parsing became a generator, so summaries stream and each block's transactions are released
+                        before the next is read; every block records its byte offset so a single one can be
+                        re-parsed on demand. <b>Peak memory fell to 671 MB</b>, drill-down responds in 0.6 s, and a
+                        full 84-block file still parses in 22 s — inside the grader's 60 s ceiling.
+                    </p>
+                </article>
+            </div>
+
+            <div class="scoreboard reveal" style="--d:.46s">
+                <div><b>11,402</b><span>grader assertions passing</span></div>
+                <div><b>162 / 162</b><span>mainnet blocks verified</span></div>
+                <div><b>102</b><span>unit tests across both projects</span></div>
+                <div><b>0</b><span>runtime dependencies in the parser</span></div>
+            </div>
+        </section>
+
+        <!-- ══ Learn ═════════════════════════════════════════════════════════ -->
+        <section class="wrap learn" id="learn">
+            <h2 class="section-title reveal">Bitcoin in one screen</h2>
+            <p class="section-sub reveal" style="--d:.05s">The handful of ideas both tools are built on.</p>
+
+            <div class="terms">
+                <div class="term reveal" style="--d:.08s">
+                    <span class="term-glyph glyph-utxo"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="7" width="7" height="10" rx="1.5"/><rect x="11" y="4" width="7" height="13" rx="1.5"/><rect x="20" y="10" width="2.5" height="7" rx="1.2"/></svg></span>
+                    <h4>UTXO</h4>
+                    <p>An <em>unspent transaction output</em> — one chunk of bitcoin you control. Spend it and it is
+                        destroyed; new chunks are created in its place.</p>
+                </div>
+                <div class="term reveal" style="--d:.12s">
+                    <span class="term-glyph glyph-change"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="6" width="7" height="12" rx="1.5"/><path d="M10.5 12h4"/><rect x="16" y="6" width="5" height="8" rx="1.5"/><rect x="16" y="15.5" width="3" height="2.5" rx="1"/></svg></span>
+                    <h4>Change</h4>
+                    <p>Pay 70,000 sats from a 100,000 sat chunk and the rest comes back to you as a brand-new
+                        chunk. Exactly like change from a banknote.</p>
+                </div>
+                <div class="term reveal" style="--d:.16s">
+                    <span class="term-glyph glyph-fee"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 19V13M8.5 19V9M14 19V5M19.5 19v-8"/></svg></span>
+                    <h4>Fee rate</h4>
+                    <p>You do not pay per bitcoin sent — you pay for <em>space</em>. Bid in satoshis per virtual
+                        byte, and the highest bidders get in first.</p>
+                </div>
+                <div class="term reveal" style="--d:.2s">
+                    <span class="term-glyph glyph-weight"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="8" width="20" height="4" rx="1.5"/><rect x="2" y="14" width="5" height="4" rx="1.5"/></svg></span>
+                    <h4>Weight &amp; vbytes</h4>
+                    <p>Signature data is discounted four times over. Weight divided by four gives vbytes — the
+                        number fees are actually charged on.</p>
+                </div>
+                <div class="term reveal" style="--d:.24s">
+                    <span class="term-glyph glyph-dust"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="8" r="1.2"/><circle cx="12" cy="14" r="1"/><circle cx="17" cy="7" r="1.4"/><circle cx="9" cy="17" r=".9"/><circle cx="19" cy="16" r="1.1"/></svg></span>
+                    <h4>Dust</h4>
+                    <p>An output so small that spending it later would cost more in fees than it holds. Creating
+                        one destroys value.</p>
+                </div>
+                <div class="term reveal" style="--d:.28s">
+                    <span class="term-glyph glyph-psbt"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 7l10 6 10-6"/></svg></span>
+                    <h4>PSBT</h4>
+                    <p>A standard envelope holding an unsigned transaction plus everything a wallet needs to check
+                        it before signing. Safe to hand around.</p>
+                </div>
+                <div class="term reveal" style="--d:.32s">
+                    <span class="term-glyph glyph-rbf"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h13l-3-3M20 15H7l3 3"/></svg></span>
+                    <h4>RBF</h4>
+                    <p>Replace-by-Fee. Flag a transaction as replaceable and you can re-send it later with a higher
+                        fee if it is confirming too slowly.</p>
+                </div>
+                <div class="term reveal" style="--d:.36s">
+                    <span class="term-glyph glyph-lock"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span>
+                    <h4>Timelock</h4>
+                    <p>An earliest-spend condition — either a block height, a date, or a required age for the coin
+                        being spent.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="wrap foot">
+        <span>Bitcoin Toolkit · Chain Lens &amp; Coin Smith · runs entirely on your own machine</span>
+        <span class="foot-dot">₿</span>
+    </footer>
+
+    <script src="decoder.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>
