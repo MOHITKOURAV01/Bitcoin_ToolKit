@@ -1,0 +1,31 @@
+{
+  "network": "mainnet",
+  "utxos": [
+    {
+      "txid": "bdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbd",
+      "vout": 0,
+      "value_sats": 120000,
+      "script_pubkey_hex": "0014bdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbd",
+      "script_type": "p2wpkh",
+      "address": "bc1qhk7mm0dahk7mm0dahk7mm0dahk7mm0dac65x87"
+    }
+  ],
+  "payments": [
+    {
+      "address": "bc1qh6lta047h6lta047h6lta047h6lta047f7jrvg",
+      "script_pubkey_hex": "0014bebebebebebebebebebebebebebebebebebebebe",
+      "script_type": "p2wpkh",
+      "value_sats": 80000
+    }
+  ],
+  "change": {
+    "address": "bc1qh7lml0alh7lml0alh7lml0alh7lml0algwnzxf",
+    "script_pubkey_hex": "0014bfbfbfbfbfbfbfbfbfbfbfbfbfbfbfbfbfbfbfbf",
+    "script_type": "p2wpkh"
+  },
+  "fee_rate_sat_vb": 2,
+  "locktime": 499999999,
+  "policy": {
+    "max_inputs": 5
+  }
+}
