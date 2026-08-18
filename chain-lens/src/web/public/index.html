@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chain Lens — Bitcoin Transaction Explainer</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+    <header class="app-header">
+        <div class="wrap header-inner">
+            <div class="brand">
+                <span class="brand-mark">🔍</span>
+                <div>
+                    <h1>Chain Lens</h1>
+                    <p class="tagline">See exactly what a Bitcoin transaction does — in plain English</p>
+                </div>
+            </div>
+            <div class="header-meta">
+                <div class="unit-toggle" role="group" aria-label="Display units">
+                    <button type="button" id="unit-sats" class="active">sats</button>
+                    <button type="button" id="unit-btc">BTC</button>
+                </div>
+                <nav class="tabs">
+                    <button class="tab-btn active" data-tab="tx">Single transaction</button>
+                    <button class="tab-btn" data-tab="block">Whole block</button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="wrap">
+
+        <!-- ══ Transaction mode ══════════════════════════════════════════════ -->
+        <section id="tx-tab" class="tab active">
+            <div class="layout">
+
+                <aside class="panel panel-input">
+                    <h2>1 &middot; Load a transaction</h2>
+                    <p class="hint">A transaction spends coins you already own (<b>inputs</b>) and creates new
+                        ones for other people (<b>outputs</b>). Load one to see how.</p>
+
+                    <label class="field-label" for="tx-picker">Sample transactions</label>
+                    <select id="tx-picker">
+                        <option value="">Loading…</option>
+                    </select>
+                    <p class="hint" id="tx-description">Pick a sample to see what it demonstrates.</p>
+
+                    <label class="field-label" for="tx-json">Fixture JSON</label>
+                    <textarea id="tx-json" spellcheck="false"
+                        placeholder='{ "raw_tx": "0200...", "prevouts": [ ... ] }'></textarea>
+
+                    <div class="row">
+                        <label for="tx-upload" class="btn btn-ghost">Upload .json</label>
+                        <input id="tx-upload" type="file" accept=".json,application/json" hidden>
+                        <button id="analyze-tx" class="btn btn-primary">Analyze</button>
+                    </div>
+
+                    <div id="tx-error" class="banner banner-error hidden"></div>
+                </aside>
+
+                <div class="panel panel-output">
+                    <div id="tx-empty" class="empty-hero">
+                        <div class="empty-hero-icon">🧾</div>
+                        <h2>No transaction loaded</h2>
+                        <p>Choose a sample on the left and press <b>Analyze</b>. Chain Lens will decode the raw bytes
+                            and explain who paid whom, what it cost, and anything risky about it.</p>
+                    </div>
+
+                    <div id="tx-results" class="hidden">
+                        <div class="explainer" id="tx-story"></div>
+
+                        <div class="stats">
+                            <div class="stat">
+                                <span class="stat-label">Inputs
+                                    <i class="info" data-tip="Coins being spent. Each one was an output of an earlier transaction.">i</i></span>
+                                <span class="stat-value" id="tx-vin-count">0</span>
+                                <span class="stat-sub"><span id="tx-in-sats">0</span> <span class="unit-word">sats</span> in</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-label">Outputs
+                                    <i class="info" data-tip="New coins created by this transaction — the recipients, plus any change.">i</i></span>
+                                <span class="stat-value" id="tx-vout-count">0</span>
+                                <span class="stat-sub"><span id="tx-out-sats">0</span> <span class="unit-word">sats</span> out</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-label">Fee
+                                    <i class="info" data-tip="Inputs minus outputs. Whatever is not assigned to an output is paid to the miner.">i</i></span>
+                                <span class="stat-value accent-warn" id="tx-fee">0</span>
+                                <span class="stat-sub"><span id="tx-fee-rate">0</span> sat/vB</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-label">Size
+                                    <i class="info" data-tip="Virtual bytes: how much block space this takes. Fees are charged per vbyte, not per bitcoin.">i</i></span>
+                                <span class="stat-value" id="tx-vbytes">0</span>
+                                <span class="stat-sub"><span id="tx-weight">0</span> weight units</span>
+                            </div>
+                        </div>
+
+                        <div class="gauge">
+                            <div class="gauge-readout">
+                                <span class="gauge-value" id="gauge-value">0</span>
+                                <span class="gauge-unit">sat/vB</span>
+                            </div>
+                            <div>
+                                <div class="gauge-scale">
+                                    <div class="gauge-needle" id="gauge-needle" style="left:0%"></div>
+                                </div>
+                                <div class="gauge-ticks">
+                                    <span>1</span><span>5</span><span>15</span><span>40</span><span>100</span><span>300+</span>
+                                </div>
+                                <p class="gauge-caption" id="gauge-caption"></p>
+                            </div>
+                        </div>
+
+                        <div id="tx-warnings" class="warnings hidden"></div>
+
+                        <div class="section">
+                            <h3>What this transaction is doing</h3>
+                            <p class="hint">Bitcoin transactions have recognisable shapes. Chain Lens infers the
+                                pattern from the inputs and outputs — the network sees exactly the same clues.</p>
+                            <div class="shape" id="tx-shape"></div>
+                            <div class="findings" id="tx-privacy"></div>
+                        </div>
+
+                        <div class="section">
+                            <h3>Who paid whom</h3>
+                            <p class="hint">Value flows left to right. The gap between the two sides is the miner's fee.</p>
+                            <div class="flow">
+                                <div class="flow-col">
+                                    <div class="flow-head"><span>Inputs — coins spent</span><span class="count" id="vin-badge">0</span></div>
+                                    <div id="vin-list" class="list"></div>
+                                </div>
+                                <div class="flow-mid">
+                                    <div class="flow-arrow"></div>
+                                    <div class="flow-tx"><span class="flow-tx-label">TX</span><span class="flow-tx-size" id="flow-size">0 vB</span></div>
+                                    <div class="flow-arrow"></div>
+                                </div>
+                                <div class="flow-col">
+                                    <div class="flow-head"><span>Outputs — coins created</span><span class="count" id="vout-badge">0</span></div>
+                                    <div id="vout-list" class="list"></div>
+                                </div>
+                            </div>
+                            <div class="balance-bar" id="tx-balance-bar"></div>
+                            <p class="balance-check" id="tx-balance-check"></p>
+
+                            <p class="hint" style="margin-top:18px">Every satoshi traced from the coin it came from
+                                to where it ended up. Ribbon thickness is the amount carried.</p>
+                            <div class="sankey-wrap"><svg class="sankey" id="sankey" role="img"
+                                aria-label="Value flow from inputs to outputs"></svg></div>
+                        </div>
+
+                        <div class="section" id="segwit-section">
+                            <h3>SegWit discount</h3>
+                            <p class="hint">SegWit moves signature data ("the witness") into a discounted part of the
+                                block, so the same payment takes less chargeable space than it would have before.</p>
+                            <div id="segwit-body"></div>
+                        </div>
+
+                        <div class="section">
+                            <h3>Spending rules</h3>
+                            <div class="rules">
+                                <div class="rule">
+                                    <div class="rule-head"><span>Replace&#8209;by&#8209;Fee</span><span id="tx-rbf-badge" class="badge">off</span></div>
+                                    <p class="rule-text" id="tx-rbf-text"></p>
+                                </div>
+                                <div class="rule">
+                                    <div class="rule-head"><span>Absolute timelock</span><span id="tx-lock-badge" class="badge">none</span></div>
+                                    <p class="rule-text" id="tx-lock-text"></p>
+                                </div>
+                                <div class="rule">
+                                    <div class="rule-head"><span>Relative timelocks</span><span id="tx-rel-badge" class="badge">none</span></div>
+                                    <p class="rule-text" id="tx-rel-text"></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section">
+                            <h3>The raw bytes</h3>
+                            <p class="hint">This is the transaction exactly as it travels the network. Every field is
+                                colour-coded — hover any run of bytes to see what it encodes.</p>
+                            <div class="hexmap" id="hexmap"></div>
+                            <div class="hex-legend" id="hex-legend"></div>
+                        </div>
+
+                        <div class="section">
+                            <div class="section-head">
+                                <h3>Technical details</h3>
+                                <button id="toggle-tech" class="btn btn-ghost btn-sm">Show</button>
+                            </div>
+                            <p class="hint">Raw identifiers, scripts and hex — hidden by default.</p>
+                            <div id="tech-details" class="hidden"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ══ Block mode ════════════════════════════════════════════════════ -->
+        <section id="block-tab" class="tab">
+            <div class="panel">
+                <h2>Analyze a whole block file</h2>
+                <p class="hint">Bitcoin Core stores blocks in <code>blk*.dat</code> files and the matching spent-coin
+                    records in <code>rev*.dat</code>. <code>xor.dat</code> is the key Core uses to scramble them on
+                    disk. Upload all three and Chain Lens will decode every block inside.</p>
+
+                <div class="uploads">
+                    <label class="upload">
+                        <span class="upload-kind">blk*.dat</span>
+                        <span class="upload-desc">the blocks themselves</span>
+                        <input type="file" id="blk-file" accept=".dat">
+                        <span class="upload-state" id="blk-state">no file chosen</span>
+                    </label>
+                    <label class="upload">
+                        <span class="upload-kind">rev*.dat</span>
+                        <span class="upload-desc">the coins each input spent</span>
+                        <input type="file" id="rev-file" accept=".dat">
+                        <span class="upload-state" id="rev-state">no file chosen</span>
+                    </label>
+                    <label class="upload">
+                        <span class="upload-kind">xor.dat</span>
+                        <span class="upload-desc">the descrambling key</span>
+                        <input type="file" id="xor-file" accept=".dat">
+                        <span class="upload-state" id="xor-state">no file chosen</span>
+                    </label>
+                </div>
+
+                <div class="row">
+                    <button id="analyze-block" class="btn btn-primary">Analyze block file</button>
+                </div>
+                <div id="block-progress" class="progress hidden"><div class="progress-bar" id="block-progress-bar"></div><span id="block-progress-text"></span></div>
+                <div id="block-error" class="banner banner-error hidden"></div>
+            </div>
+
+            <div id="block-results" class="panel hidden">
+                <div class="explainer" id="block-story"></div>
+                <div class="stats" id="block-stats"></div>
+                <div class="section">
+                    <h3>Fee market in this file</h3>
+                    <p class="hint">Every block competes for the same 4,000,000 weight units. These charts show how
+                        full each block was and what senders were paying to get in.</p>
+                    <div class="histogram" id="block-histogram"></div>
+                    <div class="fill-rows" id="block-fill"></div>
+                </div>
+
+                <div class="section">
+                    <h3>Blocks found</h3>
+                    <p class="hint">Click a block to see its transactions.</p>
+                    <div id="block-list" class="block-list"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <section class="wrap glossary">
+        <h3>Bitcoin in plain English</h3>
+        <div class="glossary-grid">
+            <div class="term"><h4>Transaction</h4><p>A transfer that destroys some coins you control and creates new
+                ones for someone else. Bitcoin has no balances — only coins being re-cut.</p></div>
+            <div class="term"><h4>Input</h4><p>A coin being spent, pointing back at the earlier transaction that
+                created it. It must be spent in full.</p></div>
+            <div class="term"><h4>Output</h4><p>A newly created coin, locked to whoever can satisfy its script —
+                usually the owner of an address.</p></div>
+            <div class="term"><h4>Fee &amp; fee rate</h4><p>The fee is simply inputs minus outputs. The rate
+                (sat/vB) is what you bid per unit of block space.</p></div>
+            <div class="term"><h4>Weight &amp; vbytes</h4><p>How much room a transaction takes. Witness data is
+                discounted, so weight ÷ 4 gives vbytes — the number fees are charged on.</p></div>
+            <div class="term"><h4>SegWit</h4><p>A 2017 upgrade that moved signatures out of the main transaction
+                body. It fixed transaction-ID malleability and made signatures cheaper.</p></div>
+            <div class="term"><h4>txid vs wtxid</h4><p>The txid covers the transaction without signatures; the wtxid
+                includes them. Legacy transactions have no wtxid.</p></div>
+            <div class="term"><h4>Address types</h4><p>P2PKH (legacy "1…"), P2SH ("3…"), P2WPKH/P2WSH (SegWit
+                "bc1q…") and P2TR (Taproot "bc1p…") — each a different lock on a coin.</p></div>
+            <div class="term"><h4>OP_RETURN</h4><p>An output that provably cannot be spent, used to stamp a small
+                amount of data onto the chain.</p></div>
+            <div class="term"><h4>RBF</h4><p>Replace-by-Fee. An input with <code>nSequence</code> below
+                <code>0xfffffffe</code> says the sender may resend with a higher fee.</p></div>
+            <div class="term"><h4>Timelocks</h4><p>Absolute (<code>nLockTime</code>) blocks spending until a height
+                or date. Relative (BIP68) blocks it until a coin has aged.</p></div>
+            <div class="term"><h4>Undo data</h4><p>Core keeps a record of every coin a block consumed so it can
+                rewind a block. That is what lets us show input values and fees.</p></div>
+        </div>
+    </section>
+
+    <footer class="wrap footer">
+        <span>Chain Lens · transaction &amp; block analyzer</span>
+        <span id="api-health" class="pill pill-muted">checking API…</span>
+    </footer>
+
+    <script src="/app.js"></script>
+</body>
+
+</html>
